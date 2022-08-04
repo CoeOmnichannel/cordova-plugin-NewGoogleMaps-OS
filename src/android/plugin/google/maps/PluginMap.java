@@ -2700,6 +2700,7 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
    */
   private boolean isPolygonContains(List<LatLng> path, LatLng point) {
     int wn = 0;
+ 
     VisibleRegion visibleRegion = projection.getVisibleRegion();
     LatLngBounds bounds = visibleRegion.latLngBounds;
     Point sw = projection.toScreenLocation(bounds.southwest);
@@ -2803,39 +2804,47 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
           target.put("lng", position.target.longitude);
           params.put("target", target);
 
-          VisibleRegion visibleRegion = projection.getVisibleRegion();
-          LatLngBounds latLngBounds = visibleRegion.latLngBounds;
+          VisibleRegion visibleRegion;
 
-          JSONObject northeast = new JSONObject();
-          northeast.put("lat", latLngBounds.northeast.latitude);
-          northeast.put("lng", latLngBounds.northeast.longitude);
-          params.put("northeast", northeast);
+          if(mapView != null && mapView.getWidth() > 0){
+            visibleRegion = projection.getVisibleRegion();
 
-          JSONObject southwest = new JSONObject();
-          southwest.put("lat", latLngBounds.southwest.latitude);
-          southwest.put("lng", latLngBounds.southwest.longitude);
-          params.put("southwest", southwest);
+            LatLngBounds latLngBounds = visibleRegion.latLngBounds;
 
-          JSONObject nearLeft = new JSONObject();
-          nearLeft.put("lat", visibleRegion.nearLeft.latitude);
-          nearLeft.put("lng", visibleRegion.nearLeft.longitude);
-          params.put("nearLeft", nearLeft);
+            JSONObject northeast = new JSONObject();
+            northeast.put("lat", latLngBounds.northeast.latitude);
+            northeast.put("lng", latLngBounds.northeast.longitude);
+            params.put("northeast", northeast);
 
-          JSONObject nearRight = new JSONObject();
-          nearRight.put("lat", visibleRegion.nearRight.latitude);
-          nearRight.put("lng", visibleRegion.nearRight.longitude);
-          params.put("nearRight", nearRight);
+            JSONObject southwest = new JSONObject();
+            southwest.put("lat", latLngBounds.southwest.latitude);
+            southwest.put("lng", latLngBounds.southwest.longitude);
+            params.put("southwest", southwest);
 
-          JSONObject farLeft = new JSONObject();
-          farLeft.put("lat", visibleRegion.farLeft.latitude);
-          farLeft.put("lng", visibleRegion.farLeft.longitude);
-          params.put("farLeft", farLeft);
+            JSONObject nearLeft = new JSONObject();
+            nearLeft.put("lat", visibleRegion.nearLeft.latitude);
+            nearLeft.put("lng", visibleRegion.nearLeft.longitude);
+            params.put("nearLeft", nearLeft);
 
-          JSONObject farRight = new JSONObject();
-          farRight.put("lat", visibleRegion.farRight.latitude);
-          farRight.put("lng", visibleRegion.farRight.longitude);
-          params.put("farRight", farRight);
+            JSONObject nearRight = new JSONObject();
+            nearRight.put("lat", visibleRegion.nearRight.latitude);
+            nearRight.put("lng", visibleRegion.nearRight.longitude);
+            params.put("nearRight", nearRight);
 
+            JSONObject farLeft = new JSONObject();
+            farLeft.put("lat", visibleRegion.farLeft.latitude);
+            farLeft.put("lng", visibleRegion.farLeft.longitude);
+            params.put("farLeft", farLeft);
+
+            JSONObject farRight = new JSONObject();
+            farRight.put("lat", visibleRegion.farRight.latitude);
+            farRight.put("lng", visibleRegion.farRight.longitude);
+            params.put("farRight", farRight);
+
+          }else{
+            visibleRegion = null;
+          }
+  
           jsonStr = params.toString();
         } catch (JSONException e) {
           e.printStackTrace();
