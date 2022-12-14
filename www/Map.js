@@ -1617,12 +1617,27 @@ Map.prototype._onMarkerEvent = function(eventName, markerId, position) {
 };
 
 Map.prototype._onClusterEvent = function(eventName, markerClusterId, clusterId, position) {
+  
+  console.log("eventName");
+  console.log(eventName);
+  
+   console.log("markerClusterId");
+  console.log(markerClusterId);
+  
+   console.log("clusterId");
+  console.log(clusterId);
+  
+   console.log("position");
+  console.log(position);
+  
   var self = this;
   var markerCluster = self.OVERLAYS[markerClusterId] || null;
   if (markerCluster) {
     if (/^marker_/i.test(clusterId)) {
       // regular marker
       var marker = markerCluster.getMarkerById(clusterId);
+      console.log("marker criado atraves do clusterId:");
+      console.log(marker);
       if (eventName === event.MARKER_CLICK) {
         markerCluster.trigger(eventName, position, marker);
       } else {
