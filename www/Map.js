@@ -1641,14 +1641,18 @@ Map.prototype._onClusterEvent = function(eventName, markerClusterId, clusterId, 
       if (eventName === event.MARKER_CLICK) {
         markerCluster.trigger(eventName, position, marker);
       } else {
-        if (eventName === event.INFO_OPEN) {
+        if (marker && eventName === event.INFO_OPEN) {
           marker.set('isInfoWindowVisible', true);
         }
-        if (eventName === event.INFO_CLOSE) {
+        if (marker && eventName === event.INFO_CLOSE) {
           marker.set('isInfoWindowVisible', false);
         }
       }
-      marker.trigger(eventName, position, marker);
+      
+      if(marker){
+       marker.trigger(eventName, position, marker);
+      }
+      
     } else {
       // cluster marker
       var cluster = markerCluster._getClusterByClusterId(clusterId);
