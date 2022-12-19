@@ -290,7 +290,7 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
             FrameLayout.LayoutParams lParams = new FrameLayout.LayoutParams((int)(48 * density), (int)(48 * density));
             lParams.gravity = Gravity.RIGHT;
             lParams.rightMargin = (int)(6 * density);
-            lParams.topMargin = (int)(6 * density);
+            lParams.bottomMargin = (int)(6 * density);
             lParams.leftMargin = 0;
             dummyMyLocationButton.setClickable(true);
             dummyMyLocationButton.setAlpha(0.75f);
