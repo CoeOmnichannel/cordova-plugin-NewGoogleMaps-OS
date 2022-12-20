@@ -23,10 +23,12 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.PermissionChecker;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -167,6 +169,7 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
     mapId = meta.getString("__pgmId");
     viewDepth = meta.getInt("depth");
     final JSONObject params = args.getJSONObject(1);
+    boolean hasZoom = false;
 
     //controls
     if (params.has("controls")) {
@@ -177,6 +180,7 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
       }
       if (controls.has("zoom")) {
         options.zoomControlsEnabled(controls.getBoolean("zoom"));
+        hasZoom = controls.getBoolean("zoom");
       }
       if (controls.has("mapToolbar")) {
         options.mapToolbarEnabled(controls.getBoolean("mapToolbar"));
@@ -276,6 +280,7 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
 
     mapView = new MapView(activity, options);
 
+    boolean finalHasZoom = hasZoom;
     activity.runOnUiThread(new Runnable() {
       @Override
       public void run() {
@@ -287,16 +292,14 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
           public void onMapReady(GoogleMap googleMap) {
 
             dummyMyLocationButton = new ImageView(activity);
+            int myLocationBottom = finalHasZoom ? 100 : 6;
             FrameLayout.LayoutParams lParams = new FrameLayout.LayoutParams((int)(48 * density), (int)(48 * density));
-            lParams.gravity = Gravity.RIGHT;
+            lParams.gravity = Gravity.BOTTOM + Gravity.END;
+            lParams.bottomMargin = (int)(myLocationBottom * density);
             lParams.rightMargin = (int)(6 * density);
-            lParams.bottomMargin = (int)(6 * density);
-            lParams.leftMargin = 0;
             dummyMyLocationButton.setClickable(true);
             dummyMyLocationButton.setAlpha(0.75f);
             dummyMyLocationButton.setVisibility(View.GONE);
-            dummyMyLocationButton.setLayoutParams(lParams);
-
             int buttonImgId = PluginUtil.getAppResource(cordova.getActivity(), "dummy_my_location_button", "drawable");
             dummyMyLocationButton.setImageBitmap(BitmapFactory.decodeResource(activity.getResources(), buttonImgId));
 
@@ -309,7 +312,7 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
                 PluginMap.this.onMyLocationButtonClick();
               }
             });
-            mapView.addView(dummyMyLocationButton);
+            mapView.addView(dummyMyLocationButton, lParams);
 
             map = googleMap;
             projection = map.getProjection();
