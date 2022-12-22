@@ -189,7 +189,7 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
       }
 
 
-      if (controls.has("myLocationButton") || controls.has("myLocation")) {
+      if (controls.has("myLocationButton")) {
 
         // Request geolocation permission.
         boolean locationPermission = PermissionChecker.checkSelfPermission(cordova.getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PermissionChecker.PERMISSION_GRANTED;
@@ -339,24 +339,19 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
                   map.setIndoorEnabled(isEnabled);
                 }
 
-                if (controls.has("myLocationButton") || controls.has("myLocation")) {
+                if (controls.has("myLocationButton")) {
                   boolean locationPermission = PermissionChecker.checkSelfPermission(cordova.getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PermissionChecker.PERMISSION_GRANTED;
                   //Log.d(TAG, "---> (314) hasPermission =  " + locationPermission);
 
                   if (locationPermission) {
-                    Boolean isMyLocationEnabled = false;
-                    if (controls.has("myLocation")) {
-                      isMyLocationEnabled = controls.getBoolean("myLocation");
-                      map.setMyLocationEnabled(isMyLocationEnabled);
-                    }
 
-                    Boolean isMyLocationButtonEnabled = false;
+                    boolean isMyLocationButtonEnabled = false;
                     if (controls.has("myLocationButton")) {
                       isMyLocationButtonEnabled = controls.getBoolean("myLocationButton");
                       map.getUiSettings().setMyLocationButtonEnabled(isMyLocationButtonEnabled);
                     }
-                    //Log.d(TAG, "--->isMyLocationButtonEnabled = " + isMyLocationButtonEnabled + ", isMyLocationEnabled = " + isMyLocationEnabled);
-                    if (!isMyLocationEnabled && isMyLocationButtonEnabled) {
+
+                    if (isMyLocationButtonEnabled) {
                       dummyMyLocationButton.setVisibility(View.VISIBLE);
                     } else {
                       dummyMyLocationButton.setVisibility(View.GONE);
@@ -1383,7 +1378,7 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
               if (controls.has("mapToolbar")) {
                 settings.setMapToolbarEnabled(controls.getBoolean("mapToolbar"));
               }
-              if (controls.has("myLocation") || controls.has("myLocationButton")) {
+              if (controls.has("myLocationButton")) {
                 cordova.getThreadPool().submit(new Runnable() {
                   @Override
                   public void run() {
@@ -1867,27 +1862,17 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
       public void run() {
         try {
 
-          Boolean isMyLocationEnabled = false;
-          if (params.has("myLocation")) {
-            //Log.d(TAG, "--->myLocation = " + params.getBoolean("myLocation"));
-            isMyLocationEnabled = params.getBoolean("myLocation");
-            map.setMyLocationEnabled(isMyLocationEnabled);
-          }
-
-          Boolean isMyLocationButtonEnabled = false;
+          boolean isMyLocationButtonEnabled = false;
           if (params.has("myLocationButton")) {
-            //Log.d(TAG, "--->myLocationButton = " + params.getBoolean("myLocationButton"));
             isMyLocationButtonEnabled = params.getBoolean("myLocationButton");
             Log.d("CAMERA_MOVE", "ativando o button padrão");
             map.getUiSettings().setMyLocationButtonEnabled(isMyLocationButtonEnabled);
           }
-          //Log.d(TAG, "--->isMyLocationButtonEnabled = " + isMyLocationButtonEnabled + ", isMyLocationEnabled = " + isMyLocationEnabled);
-          if (!isMyLocationEnabled && isMyLocationButtonEnabled) {
+
+          if (isMyLocationButtonEnabled) {
             dummyMyLocationButton.setVisibility(View.VISIBLE);
-            Log.d("CAMERA_MOVE", "showing dummy location");
           } else {
             dummyMyLocationButton.setVisibility(View.GONE);
-            Log.d("CAMERA_MOVE", "hiding dummy location");
           }
 
         } catch (Exception e) {
@@ -2712,7 +2697,7 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
    */
   private boolean isPolygonContains(List<LatLng> path, LatLng point) {
     int wn = 0;
- 
+
     VisibleRegion visibleRegion = projection.getVisibleRegion();
     LatLngBounds bounds = visibleRegion.latLngBounds;
     Point sw = projection.toScreenLocation(bounds.southwest);
@@ -2856,7 +2841,7 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
           }else{
             visibleRegion = null;
           }
-  
+
           jsonStr = params.toString();
         } catch (JSONException e) {
           e.printStackTrace();
