@@ -45,6 +45,7 @@ import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.Projection;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.CameraPosition.Builder;
@@ -117,6 +118,9 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
   private final String ANIMATE_CAMERA_CANCELED = "animate_camera_canceled";
 
   private Handler mainHandler;
+   
+  //Create field for map button.
+  private View locationButton;
 
   private class AsyncUpdateCameraPositionResult {
     CameraUpdate cameraUpdate;
@@ -209,9 +213,6 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
             }
           }
           locationPermission = PermissionChecker.checkSelfPermission(cordova.getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PermissionChecker.PERMISSION_GRANTED;
-
-          //Log.d(TAG, "---> (252)setMyLocationEnabled, hasPermission =  " + locationPermission);
-
         }
       }
     }
@@ -313,10 +314,18 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
               @Override
               public void onClick(View v) {
                 Log.d("CAMERA_MOVE", "clique no my custom location");
+                if(map != null)
+                {
+                  locationButton = mapView.findViewById(0x2);
+                  if(locationButton != null)
+                    locationButton.callOnClick();
+
+                }
                 PluginMap.this.onMyLocationButtonClick();
               }
             });
             mapView.addView(dummyMyLocationButton, lParams);
+            locationButton = mapView.findViewById(0x2);
 
             map = googleMap;
             projection = map.getProjection();
@@ -350,6 +359,8 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
                       isMyLocationButtonEnabled = controls.getBoolean("myLocationButton");
                       map.getUiSettings().setMyLocationButtonEnabled(isMyLocationButtonEnabled);
                       map.setMyLocationEnabled(isMyLocationButtonEnabled);
+                      if(locationButton != null)
+                        locationButton.setVisibility(View.GONE);
                     }
 
                     if (isMyLocationButtonEnabled) {
@@ -1869,6 +1880,8 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
             Log.d("CAMERA_MOVE", "ativando o button padrão");
             map.getUiSettings().setMyLocationButtonEnabled(isMyLocationButtonEnabled);
             map.setMyLocationEnabled(isMyLocationButtonEnabled);
+            if(locationButton != null)
+              locationButton.setVisibility(View.GONE);
           }
 
           if (isMyLocationButtonEnabled) {
