@@ -156,7 +156,7 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
   @Override
   public void initialize(CordovaInterface cordova, final CordovaWebView webView) {
 
-    LOG.d("CAMERA_MOVE", "INITIALIZE");
+    Log.d("CAMERA_MOVE", "INITIALIZE");
     super.initialize(cordova, webView);
     activity = cordova.getActivity();
     mainHandler = new Handler(Looper.getMainLooper());
@@ -165,7 +165,7 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   public void getMap(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
 
-    LOG.d("CAMERA_MOVE", "GETMAP");
+    Log.d("CAMERA_MOVE", "GETMAP");
     GoogleMapOptions options = new GoogleMapOptions();
     JSONObject meta = args.getJSONObject(0);
     mapId = meta.getString("__pgmId");
@@ -293,6 +293,7 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
           @Override
           public void onMapReady(GoogleMap googleMap) {
 
+            Log.d("CAMERA_MOVE", "MAP ASYNC");
             dummyMyLocationButton = new ImageView(activity);
             int myLocationBottom = finalHasZoom ? 100 : 6;
             FrameLayout.LayoutParams lParams = new FrameLayout.LayoutParams((int)(48 * density), (int)(48 * density));
