@@ -312,6 +312,7 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
             dummyMyLocationButton.setOnClickListener(new View.OnClickListener() {
               @Override
               public void onClick(View v) {
+                Log.d("CAMERA_MOVE", "clique no my custom location");
                 PluginMap.this.onMyLocationButtonClick();
               }
             });
@@ -1877,13 +1878,16 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
           if (params.has("myLocationButton")) {
             //Log.d(TAG, "--->myLocationButton = " + params.getBoolean("myLocationButton"));
             isMyLocationButtonEnabled = params.getBoolean("myLocationButton");
+            Log.d("CAMERA_MOVE", "ativando o button padrão");
             map.getUiSettings().setMyLocationButtonEnabled(isMyLocationButtonEnabled);
           }
           //Log.d(TAG, "--->isMyLocationButtonEnabled = " + isMyLocationButtonEnabled + ", isMyLocationEnabled = " + isMyLocationEnabled);
           if (!isMyLocationEnabled && isMyLocationButtonEnabled) {
             dummyMyLocationButton.setVisibility(View.VISIBLE);
+            Log.d("CAMERA_MOVE", "showing dummy location");
           } else {
             dummyMyLocationButton.setVisibility(View.GONE);
+            Log.d("CAMERA_MOVE", "hiding dummy location");
           }
 
         } catch (Exception e) {
