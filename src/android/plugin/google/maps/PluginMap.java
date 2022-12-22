@@ -23,6 +23,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -44,6 +45,7 @@ import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.Projection;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.CameraPosition.Builder;
@@ -116,6 +118,9 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
   private final String ANIMATE_CAMERA_CANCELED = "animate_camera_canceled";
 
   private Handler mainHandler;
+   
+  //Create field for map button.
+  private View locationButton;
 
   private class AsyncUpdateCameraPositionResult {
     CameraUpdate cameraUpdate;
@@ -154,6 +159,8 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
 
   @Override
   public void initialize(CordovaInterface cordova, final CordovaWebView webView) {
+
+    Log.d("CAMERA_MOVE", "INITIALIZE");
     super.initialize(cordova, webView);
     activity = cordova.getActivity();
     mainHandler = new Handler(Looper.getMainLooper());
@@ -162,11 +169,13 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
   @TargetApi(Build.VERSION_CODES.HONEYCOMB)
   public void getMap(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
 
+    Log.d("CAMERA_MOVE", "GETMAP");
     GoogleMapOptions options = new GoogleMapOptions();
     JSONObject meta = args.getJSONObject(0);
     mapId = meta.getString("__pgmId");
     viewDepth = meta.getInt("depth");
     final JSONObject params = args.getJSONObject(1);
+    boolean hasZoom = false;
 
     //controls
     if (params.has("controls")) {
@@ -177,13 +186,14 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
       }
       if (controls.has("zoom")) {
         options.zoomControlsEnabled(controls.getBoolean("zoom"));
+        hasZoom = controls.getBoolean("zoom");
       }
       if (controls.has("mapToolbar")) {
         options.mapToolbarEnabled(controls.getBoolean("mapToolbar"));
       }
 
 
-      if (controls.has("myLocationButton") || controls.has("myLocation")) {
+      if (controls.has("myLocationButton")) {
 
         // Request geolocation permission.
         boolean locationPermission = PermissionChecker.checkSelfPermission(cordova.getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PermissionChecker.PERMISSION_GRANTED;
@@ -203,9 +213,6 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
             }
           }
           locationPermission = PermissionChecker.checkSelfPermission(cordova.getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) == PermissionChecker.PERMISSION_GRANTED;
-
-          //Log.d(TAG, "---> (252)setMyLocationEnabled, hasPermission =  " + locationPermission);
-
         }
       }
     }
@@ -276,6 +283,7 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
 
     mapView = new MapView(activity, options);
 
+    boolean finalHasZoom = hasZoom;
     activity.runOnUiThread(new Runnable() {
       @Override
       public void run() {
@@ -286,17 +294,15 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
           @Override
           public void onMapReady(GoogleMap googleMap) {
 
+            Log.d("CAMERA_MOVE", "MAP ASYNC");
             dummyMyLocationButton = new ImageView(activity);
+            int myLocationBottom = finalHasZoom ? 100 : 6;
             FrameLayout.LayoutParams lParams = new FrameLayout.LayoutParams((int)(48 * density), (int)(48 * density));
-            lParams.gravity = Gravity.RIGHT;
+            lParams.gravity = Gravity.BOTTOM + Gravity.END;
+            lParams.bottomMargin = (int)(myLocationBottom * density);
             lParams.rightMargin = (int)(6 * density);
-            lParams.topMargin = (int)(6 * density);
-            lParams.leftMargin = 0;
             dummyMyLocationButton.setClickable(true);
-            dummyMyLocationButton.setAlpha(0.75f);
             dummyMyLocationButton.setVisibility(View.GONE);
-            dummyMyLocationButton.setLayoutParams(lParams);
-
             int buttonImgId = PluginUtil.getAppResource(cordova.getActivity(), "dummy_my_location_button", "drawable");
             dummyMyLocationButton.setImageBitmap(BitmapFactory.decodeResource(activity.getResources(), buttonImgId));
 
@@ -306,10 +312,19 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
             dummyMyLocationButton.setOnClickListener(new View.OnClickListener() {
               @Override
               public void onClick(View v) {
+                Log.d("CAMERA_MOVE", "clique no my custom location");
+                if(map != null)
+                {
+                  locationButton = mapView.findViewById(0x2);
+                  if(locationButton != null)
+                    locationButton.callOnClick();
+
+                }
                 PluginMap.this.onMyLocationButtonClick();
               }
             });
-            mapView.addView(dummyMyLocationButton);
+            mapView.addView(dummyMyLocationButton, lParams);
+            locationButton = mapView.findViewById(0x2);
 
             map = googleMap;
             projection = map.getProjection();
@@ -332,24 +347,22 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
                   map.setIndoorEnabled(isEnabled);
                 }
 
-                if (controls.has("myLocationButton") || controls.has("myLocation")) {
+                if (controls.has("myLocationButton")) {
                   boolean locationPermission = PermissionChecker.checkSelfPermission(cordova.getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) == PermissionChecker.PERMISSION_GRANTED;
                   //Log.d(TAG, "---> (314) hasPermission =  " + locationPermission);
 
                   if (locationPermission) {
-                    Boolean isMyLocationEnabled = false;
-                    if (controls.has("myLocation")) {
-                      isMyLocationEnabled = controls.getBoolean("myLocation");
-                      map.setMyLocationEnabled(isMyLocationEnabled);
-                    }
 
-                    Boolean isMyLocationButtonEnabled = false;
+                    boolean isMyLocationButtonEnabled = false;
                     if (controls.has("myLocationButton")) {
                       isMyLocationButtonEnabled = controls.getBoolean("myLocationButton");
                       map.getUiSettings().setMyLocationButtonEnabled(isMyLocationButtonEnabled);
+                      map.setMyLocationEnabled(isMyLocationButtonEnabled);
+                      if(locationButton != null)
+                        locationButton.setVisibility(View.GONE);
                     }
-                    //Log.d(TAG, "--->isMyLocationButtonEnabled = " + isMyLocationButtonEnabled + ", isMyLocationEnabled = " + isMyLocationEnabled);
-                    if (!isMyLocationEnabled && isMyLocationButtonEnabled) {
+
+                    if (isMyLocationButtonEnabled) {
                       dummyMyLocationButton.setVisibility(View.VISIBLE);
                     } else {
                       dummyMyLocationButton.setVisibility(View.GONE);
@@ -378,6 +391,7 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
                   }
                   map.setPadding(left, top, right, bottom);
 
+                  Log.d("CAMERA_MOVE", "getMap has preference set layout 2");
                   FrameLayout.LayoutParams lParams2 = (FrameLayout.LayoutParams) dummyMyLocationButton.getLayoutParams();
                   lParams2.rightMargin = right + (int)(5 * density);
                   lParams2.topMargin = top + (int)(5 * density);
@@ -1306,7 +1320,7 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
                   right = (int) (padding.getInt("right") * density);
                 }
                 map.setPadding(left, top, right, bottom);
-
+                Log.d("CAMERA_MOVE", "outro padding ");
                 FrameLayout.LayoutParams lParams2 = (FrameLayout.LayoutParams) dummyMyLocationButton.getLayoutParams();
                 lParams2.rightMargin = right + (int)(5 * density);
                 lParams2.topMargin = top + (int)(5 * density);
@@ -1375,7 +1389,7 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
               if (controls.has("mapToolbar")) {
                 settings.setMapToolbarEnabled(controls.getBoolean("mapToolbar"));
               }
-              if (controls.has("myLocation") || controls.has("myLocationButton")) {
+              if (controls.has("myLocationButton")) {
                 cordova.getThreadPool().submit(new Runnable() {
                   @Override
                   public void run() {
@@ -1859,21 +1873,17 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
       public void run() {
         try {
 
-          Boolean isMyLocationEnabled = false;
-          if (params.has("myLocation")) {
-            //Log.d(TAG, "--->myLocation = " + params.getBoolean("myLocation"));
-            isMyLocationEnabled = params.getBoolean("myLocation");
-            map.setMyLocationEnabled(isMyLocationEnabled);
+          boolean isMyLocationButtonEnabled = false;
+          if (params.has("myLocationButton")) {
+            isMyLocationButtonEnabled = params.getBoolean("myLocationButton");
+            Log.d("CAMERA_MOVE", "ativando o button padrão");
+            map.getUiSettings().setMyLocationButtonEnabled(isMyLocationButtonEnabled);
+            map.setMyLocationEnabled(isMyLocationButtonEnabled);
+            if(locationButton != null)
+              locationButton.setVisibility(View.GONE);
           }
 
-          Boolean isMyLocationButtonEnabled = false;
-          if (params.has("myLocationButton")) {
-            //Log.d(TAG, "--->myLocationButton = " + params.getBoolean("myLocationButton"));
-            isMyLocationButtonEnabled = params.getBoolean("myLocationButton");
-            map.getUiSettings().setMyLocationButtonEnabled(isMyLocationButtonEnabled);
-          }
-          //Log.d(TAG, "--->isMyLocationButtonEnabled = " + isMyLocationButtonEnabled + ", isMyLocationEnabled = " + isMyLocationEnabled);
-          if (!isMyLocationEnabled && isMyLocationButtonEnabled) {
+          if (isMyLocationButtonEnabled) {
             dummyMyLocationButton.setVisibility(View.VISIBLE);
           } else {
             dummyMyLocationButton.setVisibility(View.GONE);
@@ -2208,9 +2218,10 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
       public void run() {
         map.setPadding(left, top, right, bottom);
 
+        Log.d("CAMERA_MOVE", "setPadding");
         FrameLayout.LayoutParams lParams2 = (FrameLayout.LayoutParams) dummyMyLocationButton.getLayoutParams();
         lParams2.rightMargin = right + (int)(5 * density);
-        lParams2.topMargin = top + (int)(5 * density);
+        lParams2.topMargin = top + (int)(400 * density);
         dummyMyLocationButton.setLayoutParams(lParams2);
 
         callbackContext.success();
@@ -2700,7 +2711,7 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
    */
   private boolean isPolygonContains(List<LatLng> path, LatLng point) {
     int wn = 0;
- 
+
     VisibleRegion visibleRegion = projection.getVisibleRegion();
     LatLngBounds bounds = visibleRegion.latLngBounds;
     Point sw = projection.toScreenLocation(bounds.southwest);
@@ -2844,7 +2855,7 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
           }else{
             visibleRegion = null;
           }
-  
+
           jsonStr = params.toString();
         } catch (JSONException e) {
           e.printStackTrace();
