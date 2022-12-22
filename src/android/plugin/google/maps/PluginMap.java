@@ -349,6 +349,7 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
                     if (controls.has("myLocationButton")) {
                       isMyLocationButtonEnabled = controls.getBoolean("myLocationButton");
                       map.getUiSettings().setMyLocationButtonEnabled(isMyLocationButtonEnabled);
+                      map.setMyLocationEnabled(isMyLocationButtonEnabled);
                     }
 
                     if (isMyLocationButtonEnabled) {
@@ -1867,6 +1868,7 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
             isMyLocationButtonEnabled = params.getBoolean("myLocationButton");
             Log.d("CAMERA_MOVE", "ativando o button padrão");
             map.getUiSettings().setMyLocationButtonEnabled(isMyLocationButtonEnabled);
+            map.setMyLocationEnabled(isMyLocationButtonEnabled);
           }
 
           if (isMyLocationButtonEnabled) {
