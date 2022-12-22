@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.PermissionChecker;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -380,6 +381,7 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
                   }
                   map.setPadding(left, top, right, bottom);
 
+                  Log.d("CAMERA_MOVE", "getMap has preference set layout 2");
                   FrameLayout.LayoutParams lParams2 = (FrameLayout.LayoutParams) dummyMyLocationButton.getLayoutParams();
                   lParams2.rightMargin = right + (int)(5 * density);
                   lParams2.topMargin = top + (int)(5 * density);
@@ -1308,7 +1310,7 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
                   right = (int) (padding.getInt("right") * density);
                 }
                 map.setPadding(left, top, right, bottom);
-
+                Log.d("CAMERA_MOVE", "outro padding ");
                 FrameLayout.LayoutParams lParams2 = (FrameLayout.LayoutParams) dummyMyLocationButton.getLayoutParams();
                 lParams2.rightMargin = right + (int)(5 * density);
                 lParams2.topMargin = top + (int)(5 * density);
@@ -2210,9 +2212,10 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
       public void run() {
         map.setPadding(left, top, right, bottom);
 
+        Log.d("CAMERA_MOVE", "setPadding");
         FrameLayout.LayoutParams lParams2 = (FrameLayout.LayoutParams) dummyMyLocationButton.getLayoutParams();
         lParams2.rightMargin = right + (int)(5 * density);
-        lParams2.topMargin = top + (int)(5 * density);
+        lParams2.topMargin = top + (int)(400 * density);
         dummyMyLocationButton.setLayoutParams(lParams2);
 
         callbackContext.success();
