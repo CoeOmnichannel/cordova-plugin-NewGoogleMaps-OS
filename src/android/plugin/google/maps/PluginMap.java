@@ -28,7 +28,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.PermissionChecker;
 
 import com.google.android.gms.maps.CameraUpdate;
