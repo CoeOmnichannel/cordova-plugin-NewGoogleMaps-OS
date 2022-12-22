@@ -302,7 +302,6 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
             lParams.bottomMargin = (int)(myLocationBottom * density);
             lParams.rightMargin = (int)(6 * density);
             dummyMyLocationButton.setClickable(true);
-            dummyMyLocationButton.setAlpha(0.75f);
             dummyMyLocationButton.setVisibility(View.GONE);
             int buttonImgId = PluginUtil.getAppResource(cordova.getActivity(), "dummy_my_location_button", "drawable");
             dummyMyLocationButton.setImageBitmap(BitmapFactory.decodeResource(activity.getResources(), buttonImgId));
