@@ -107,7 +107,7 @@ getSuggestionsFromLocations : function(params, success_callback, errorCallback) 
   } else {
     return new Promise(resolver);
   }
-};
+}
 
     
   };
