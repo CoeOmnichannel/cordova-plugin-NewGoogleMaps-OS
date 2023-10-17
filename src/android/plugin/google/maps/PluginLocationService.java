@@ -65,7 +65,33 @@ public class PluginLocationService extends CordovaPlugin {
   public void initialize(final CordovaInterface cordova, final CordovaWebView webView) {
     super.initialize(cordova, webView);
     activity = cordova.getActivity();
+
+    Context appContext = cordova.getActivity().getApplicationContext();
+
+     // Check the API key
+    ApplicationInfo appliInfo = null;
+    try {
+      appliInfo = activity.getPackageManager().getApplicationInfo(activity.getPackageName(), PackageManager.GET_META_DATA);
+
+       String API_KEY = appliInfo.metaData.getString("com.google.android.maps.v2.API_KEY");
+  
+      System.out.println("### API_KEY ###");
+      System.out.println(API_KEY);
+  
+      System.out.println("### textLocation ###");
+      System.out.println(textLocation);
+
+    
+      Places.initialize(appContext, API_KEY);
+ 
+    } catch (NameNotFoundException e) {
+
+      System.out.println("Erro ao inicializar o Places: " + e.getMessage());
+      
+    }
+ 
   }
+  
   private static Location lastLocation = null;
   private ArrayList<CallbackContext> regularAccuracyRequestList = new ArrayList<CallbackContext>();
   private ArrayList<CallbackContext> highAccuracyRequestList = new ArrayList<CallbackContext>();
@@ -88,7 +114,8 @@ public class PluginLocationService extends CordovaPlugin {
             PluginLocationService.this.getMyLocation(args, callbackContext);
           }else if ("getSuggestionsFromLocations".equals(action)) {
             String textLocation = args.getString(0);
-            PluginLocationService.this.getSuggestionsFromLocations(textLocation, callbackContext, getApplicationContext());
+             
+            PluginLocationService.this.getSuggestionsFromLocations(textLocation, callbackContext);
           } else if ("hasPermission".equals(action)) {
             PluginLocationService.this.hasPermission(args, callbackContext);
           }
@@ -113,33 +140,8 @@ public class PluginLocationService extends CordovaPlugin {
     }
   }
 
-    private void getSuggestionsFromLocations(String textLocation, CallbackContext callbackContext, Context context) {
-
-
-     // Check the API key
-    ApplicationInfo appliInfo = null;
-    try {
-      appliInfo = activity.getPackageManager().getApplicationInfo(activity.getPackageName(), PackageManager.GET_META_DATA);
-
-       String API_KEY = appliInfo.metaData.getString("com.google.android.maps.v2.API_KEY");
-  
-      System.out.println("### API_KEY ###");
-      System.out.println(API_KEY);
-  
-      System.out.println("### textLocation ###");
-      System.out.println(textLocation);
-
-    
-      Places.initialize(context, API_KEY);
-
-    
-      System.out.println("Erro ao inicializar o Places: " + e.getMessage());
-      
-    } catch (NameNotFoundException e) {}
-
-   
-    
-    
+    private void getSuggestionsFromLocations(String textLocation, CallbackContext callbackContext) {
+ 
         // Configurar a sessão de Autocomplete
     AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
 
