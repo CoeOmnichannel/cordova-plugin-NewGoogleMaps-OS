@@ -140,15 +140,8 @@ public class PluginLocationService extends CordovaPlugin {
         PlacesClient placesClient = com.google.android.libraries.places.api.Places.createClient(this.cordova.getActivity());
      System.out.println("### 4 ###");
     System.out.println("PlacesClient criado com sucesso.");
-} catch (Exception e) {
-    System.out.println("Erro ao criar o PlacesClient: " + e.getMessage());
-}
 
-       
-
-   
-
-        // Fazer a requisição de Autocomplete
+  // Fazer a requisição de Autocomplete
         placesClient.findAutocompletePredictions(request).addOnSuccessListener((response) -> {
 
           System.out.println("### 5 ###");
@@ -170,6 +163,17 @@ public class PluginLocationService extends CordovaPlugin {
             .addOnFailureListener((exception) -> {
                 callbackContext.error("Erro ao obter sugestões de locais: " + exception.getMessage());
             });
+
+    
+} catch (Exception e) {
+    System.out.println("Erro ao criar o PlacesClient: " + e.getMessage());
+}
+
+       
+
+   
+
+        
     }
 
 
