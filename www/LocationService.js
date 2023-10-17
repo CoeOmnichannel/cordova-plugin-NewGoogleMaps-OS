@@ -92,7 +92,7 @@ getSuggestionsFromLocations : function(params, success_callback, errorCallback) 
     function(sugestoes) {
       resolve.call(self, sugestoes);
     },
-    reject.bind(self), 'NomeDoPlugin', 'getSuggestionsFromLocations', [params], {sync: true});
+    reject.bind(self), 'PluginLocationService', 'getSuggestionsFromLocations', [params], {sync: true});
   };
 
   var errorHandler = function(result) {
