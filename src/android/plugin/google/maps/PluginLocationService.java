@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
+import android.content.pm.ApplicationInfo;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,6 +32,8 @@ import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.api.Places;
+
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
@@ -48,6 +51,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class PluginLocationService extends CordovaPlugin {
+  
   private AppCompatActivity activity;
   private final String TAG = "PluginLocationService";
   private HashMap<String, Bundle> bufferForLocationDialog = new HashMap<String, Bundle>();
@@ -108,74 +112,87 @@ public class PluginLocationService extends CordovaPlugin {
     }
   }
 
-  private void getSuggestionsFromLocations(String textLocation, CallbackContext callbackContext) {
+    private void getSuggestionsFromLocations(String textLocation, CallbackContext callbackContext) {
+
+
+     // Check the API key
+    ApplicationInfo appliInfo = null;
+    try {
+      appliInfo = activity.getPackageManager().getApplicationInfo(activity.getPackageName(), PackageManager.GET_META_DATA);
+    } catch (NameNotFoundException e) {}
+
+    String API_KEY = appliInfo.metaData.getString("com.google.android.maps.v2.API_KEY");
+
+    System.out.println("### API_KEY ###");
+    System.out.println(API_KEY);
 
     System.out.println("### textLocation ###");
     System.out.println(textLocation);
+
+    try {
+      Places.initialize(getApplicationContext(), API_KEY);
+
+    } catch (Exception e) {
+      System.out.println("Erro ao inicializar o Places: " + e.getMessage());
+    }
     
         // Configurar a sessão de Autocomplete
-        AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
+    AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
 
     System.out.println("### 1 ###");
 
         // Configurar os limites de busca
-        RectangularBounds bounds = RectangularBounds.newInstance(
-                new com.google.android.gms.maps.model.LatLng(-33.880490, 151.184363),
-                new com.google.android.gms.maps.model.LatLng(-33.858754, 151.229596));
+    RectangularBounds bounds = RectangularBounds.newInstance(
+      new com.google.android.gms.maps.model.LatLng(-33.880490, 151.184363),
+      new com.google.android.gms.maps.model.LatLng(-33.858754, 151.229596));
 
     System.out.println("### 2 ###");
 
         // Configurar a requisição de Autocomplete
-        FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
-                .setLocationBias(bounds)
-                .setSessionToken(token)
-                .setQuery(textLocation)
-                .build();
+    FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
+    .setLocationBias(bounds)
+    .setSessionToken(token)
+    .setQuery(textLocation)
+    .build();
 
     System.out.println("### 3 ###");
 
-  try {
+    try {
      // Inicializar o PlacesClient
-    
-        PlacesClient placesClient = com.google.android.libraries.places.api.Places.createClient(this.cordova.getActivity());
-     System.out.println("### 4 ###");
-    System.out.println("PlacesClient criado com sucesso.");
+
+      PlacesClient placesClient = com.google.android.libraries.places.api.Places.createClient(this.cordova.getActivity());
+      System.out.println("### 4 ###");
+      System.out.println("PlacesClient criado com sucesso.");
 
   // Fazer a requisição de Autocomplete
-        placesClient.findAutocompletePredictions(request).addOnSuccessListener((response) -> {
+      placesClient.findAutocompletePredictions(request).addOnSuccessListener((response) -> {
 
-          System.out.println("### 5 ###");
-          
-                JSONArray suggestions = new JSONArray();
-          
-                for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
-                  
-                   suggestions.put(prediction.getFullText(null).toString());
-                   System.out.println("### result ###");
-                   System.out.println(prediction.getFullText(null).toString());
-                  
-                }
+        System.out.println("### 5 ###");
 
-             System.out.println("### 6 ###");
-          
-                callbackContext.success(suggestions);
-            })
-            .addOnFailureListener((exception) -> {
-                callbackContext.error("Erro ao obter sugestões de locais: " + exception.getMessage());
-            });
+        JSONArray suggestions = new JSONArray();
 
-    
-} catch (Exception e) {
-    System.out.println("Erro ao criar o PlacesClient: " + e.getMessage());
-}
+        for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
 
-       
+         suggestions.put(prediction.getFullText(null).toString());
+         System.out.println("### result ###");
+         System.out.println(prediction.getFullText(null).toString());
 
-   
+       }
 
-        
+       System.out.println("### 6 ###");
+
+       callbackContext.success(suggestions);
+     })
+      .addOnFailureListener((exception) -> {
+        callbackContext.error("Erro ao obter sugestões de locais: " + exception.getMessage());
+      });
+
+
+    } catch (Exception e) {
+      System.out.println("Erro ao criar o PlacesClient: " + e.getMessage());
     }
-
+ 
+  }
 
 
       @SuppressWarnings("unused")
