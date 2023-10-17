@@ -67,19 +67,15 @@ public class PluginLocationService extends CordovaPlugin {
     activity = cordova.getActivity();
 
     Context appContext = cordova.getActivity().getApplicationContext();
-
-    
+ 
     try {
-     
-      ApplicationInfo appliInfo = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
-     String apiKey = appliInfo.metaData.getString("com.google.android.geo.API_KEY");
-  
+
+      ApplicationInfo appliInfo = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
+      String apiKey = appliInfo.metaData.getString("com.google.android.geo.API_KEY");
+         
       System.out.println("### API_KEY ###");
       System.out.println(apiKey);
-  
-     
-
-    
+   
       Places.initialize(appContext, "AIzaSyBnhf6f41zomF6HzICs1BRoxa4YH4d1hhc");
  
     } catch (Exception e) {
