@@ -75,9 +75,9 @@ var LocationService = function(exec) {
     },
 
       // Adicione a função para obter sugestões de locais
-LocationService.prototype.getSuggestionsFromLocations = function(texto, success_callback, errorCallback) {
+getSuggestionsFromLocations : function(params, success_callback, errorCallback) {
   var self = this;
-  var args = [texto, success_callback || null, errorCallback];
+  var args = [params, success_callback || null, errorCallback];
   if (typeof args[0] === 'function') {
       args.unshift('');
   }
@@ -92,7 +92,7 @@ LocationService.prototype.getSuggestionsFromLocations = function(texto, success_
     function(sugestoes) {
       resolve.call(self, sugestoes);
     },
-    reject.bind(self), 'NomeDoPlugin', 'getSuggestionsFromLocations', [texto], {sync: true});
+    reject.bind(self), 'NomeDoPlugin', 'getSuggestionsFromLocations', [params], {sync: true});
   };
 
   var errorHandler = function(result) {
