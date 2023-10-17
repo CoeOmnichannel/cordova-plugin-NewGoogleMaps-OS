@@ -10,7 +10,7 @@ repositories {
 
 dependencies {
     implementation(name:'tbxml-android', ext:'aar')
-    implementation 'com.google.android.libraries.places:places:2.4.3' // Adiciona a dependência do Places SDK
+    implementation 'com.google.android.libraries.places:places:3.2.0' // Adiciona a dependência do Places SDK
 }
 
 android {
