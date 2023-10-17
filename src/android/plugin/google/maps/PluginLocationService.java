@@ -116,10 +116,14 @@ public class PluginLocationService extends CordovaPlugin {
         // Configurar a sessão de Autocomplete
         AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
 
+    System.out.println("### 1 ###");
+
         // Configurar os limites de busca
         RectangularBounds bounds = RectangularBounds.newInstance(
                 new com.google.android.gms.maps.model.LatLng(-33.880490, 151.184363),
                 new com.google.android.gms.maps.model.LatLng(-33.858754, 151.229596));
+
+    System.out.println("### 2 ###");
 
         // Configurar a requisição de Autocomplete
         FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
@@ -128,21 +132,30 @@ public class PluginLocationService extends CordovaPlugin {
                 .setQuery(textLocation)
                 .build();
 
+    System.out.println("### 3 ###");
+
         // Inicializar o PlacesClient
         PlacesClient placesClient = com.google.android.libraries.places.api.Places.createClient(this.cordova.getActivity());
 
+    System.out.println("### 4 ###");
+
         // Fazer a requisição de Autocomplete
         placesClient.findAutocompletePredictions(request).addOnSuccessListener((response) -> {
-                JSONArray suggestions = new JSONArray();
-                for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
-                    suggestions.put(prediction.getFullText(null).toString());
 
+          System.out.println("### 5 ###");
+          
+                JSONArray suggestions = new JSONArray();
+          
+                for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
+                  
+                   suggestions.put(prediction.getFullText(null).toString());
                    System.out.println("### result ###");
                    System.out.println(prediction.getFullText(null).toString());
                   
                 }
 
-             
+             System.out.println("### 6 ###");
+          
                 callbackContext.success(suggestions);
             })
             .addOnFailureListener((exception) -> {
