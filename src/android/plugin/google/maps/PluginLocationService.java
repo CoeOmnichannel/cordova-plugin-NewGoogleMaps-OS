@@ -72,11 +72,8 @@ public class PluginLocationService extends CordovaPlugin {
 
       ApplicationInfo appliInfo = appContext.getPackageManager().getApplicationInfo(appContext.getPackageName(), PackageManager.GET_META_DATA);
       String apiKey = appliInfo.metaData.getString("com.google.android.geo.API_KEY");
-         
-      System.out.println("### API_KEY ###");
-      System.out.println(apiKey);
-   
-      Places.initialize(appContext, "AIzaSyBnhf6f41zomF6HzICs1BRoxa4YH4d1hhc");
+      
+      Places.initialize(appContext, apiKey);
  
     } catch (Exception e) {
 
@@ -122,9 +119,7 @@ public class PluginLocationService extends CordovaPlugin {
     return true;
 
   }
-
-
-
+ 
   @SuppressWarnings("unused")
   public void hasPermission(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
     synchronized (semaphore) {
@@ -135,54 +130,35 @@ public class PluginLocationService extends CordovaPlugin {
   }
 
     private void getSuggestionsFromLocations(String textLocation, CallbackContext callbackContext) {
-
-       System.out.println("### textLocation ###");
-      System.out.println(textLocation);
- 
-        // Configurar a sessão de Autocomplete
+    
+    // Configurar a sessão de Autocomplete
     AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
 
-    System.out.println("### 1 ###");
-
-        // Configurar os limites de busca
+    // Configurar os limites de busca
     RectangularBounds bounds = RectangularBounds.newInstance(
       new com.google.android.gms.maps.model.LatLng(-33.880490, 151.184363),
       new com.google.android.gms.maps.model.LatLng(-33.858754, 151.229596));
 
-    System.out.println("### 2 ###");
-
-        // Configurar a requisição de Autocomplete
+    // Configurar a requisição de Autocomplete
     FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
     .setLocationBias(bounds)
     .setSessionToken(token)
     .setQuery(textLocation)
     .build();
 
-    System.out.println("### 3 ###");
-
     try {
      // Inicializar o PlacesClient
 
       PlacesClient placesClient = com.google.android.libraries.places.api.Places.createClient(this.cordova.getActivity());
-      System.out.println("### 4 ###");
-      System.out.println("PlacesClient criado com sucesso.");
-
-  // Fazer a requisição de Autocomplete
+     
+      // Fazer a requisição de Autocomplete
       placesClient.findAutocompletePredictions(request).addOnSuccessListener((response) -> {
-
-        System.out.println("### 5 ###");
 
         JSONArray suggestions = new JSONArray();
 
         for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
-
-         suggestions.put(prediction.getFullText(null).toString());
-         System.out.println("### result ###");
-         System.out.println(prediction.getFullText(null).toString());
-
-       }
-
-       System.out.println("### 6 ###");
+           suggestions.put(prediction.getFullText(null).toString());
+        }
 
        callbackContext.success(suggestions);
      })
@@ -198,7 +174,7 @@ public class PluginLocationService extends CordovaPlugin {
   }
 
 
-      @SuppressWarnings("unused")
+  @SuppressWarnings("unused")
   public void getMyLocation(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
     synchronized (semaphore) {
 
