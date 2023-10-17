@@ -109,6 +109,10 @@ public class PluginLocationService extends CordovaPlugin {
   }
 
   private void getSuggestionsFromLocations(String textLocation, CallbackContext callbackContext) {
+
+    System.out.println("### textLocation ###");
+    System.out.println(textLocation);
+    
         // Configurar a sessão de Autocomplete
         AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
 
@@ -128,12 +132,17 @@ public class PluginLocationService extends CordovaPlugin {
         PlacesClient placesClient = com.google.android.libraries.places.api.Places.createClient(this.cordova.getActivity());
 
         // Fazer a requisição de Autocomplete
-        placesClient.findAutocompletePredictions(request)
-            .addOnSuccessListener((response) -> {
+        placesClient.findAutocompletePredictions(request).addOnSuccessListener((response) -> {
                 JSONArray suggestions = new JSONArray();
                 for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
                     suggestions.put(prediction.getFullText(null).toString());
+
+                   System.out.println("### result ###");
+                   System.out.println(prediction.getFullText(null).toString());
+                  
                 }
+
+             
                 callbackContext.success(suggestions);
             })
             .addOnFailureListener((exception) -> {
