@@ -8,6 +8,7 @@ var LocationService = function(exec) {
     console.error(err);
   }
   return {
+   
     hasPermission: function(callback, errorCallback) {
       var self = this;
 
@@ -35,6 +36,8 @@ var LocationService = function(exec) {
         return new Promise(resolver);
       }
     },
+
+    
     getMyLocation: function(params, success_callback, errorCallback) {
       var self = this;
       var args = [params || {}, success_callback || null, errorCallback];
@@ -72,7 +75,44 @@ var LocationService = function(exec) {
       } else {
         return new Promise(resolver);
       }
+    },
+
+
+    // Adicione a função para obter sugestões de locais
+LocationService.prototype.getSuggestionsFromLocations = function(texto, success_callback, errorCallback) {
+  var self = this;
+  var args = [texto, success_callback || null, errorCallback];
+  if (typeof args[0] === 'function') {
+      args.unshift('');
+  }
+  texto = args[0];
+  success_callback = args[1];
+  errorCallback = args[2];
+
+  var resolver = function(resolve, reject) {
+    exec.call({
+      _isReady: true
+    },
+    function(sugestoes) {
+      resolve.call(self, sugestoes);
+    },
+    reject.bind(self), 'NomeDoPlugin', 'obterSugestoesDeLocais', [texto], {sync: true});
+  };
+
+  var errorHandler = function(result) {
+    if (typeof errorCallback === 'function') {
+        errorCallback.call(self, result);
     }
+  };
+
+  if (typeof success_callback === 'function') {
+    resolver(success_callback, errorHandler);
+    return self;
+  } else {
+    return new Promise(resolver);
+  }
+};
+ 
   };
 };
 
