@@ -83,10 +83,7 @@ public class PluginLocationService extends CordovaPlugin {
             PluginLocationService.this.getMyLocation(args, callbackContext);
           }else if ("hasPermission".equals(action)) {
             PluginLocationService.this.hasPermission(args, callbackContext);
-          } else if ("getSuggestionsFromLocations".equals(action)) {
-            String textLocation = args.getString(0);
-            PluginLocationService.this.getSuggestionsFromLocations(textLocation, callbackContext);
-          }
+          }  
 
         } catch (JSONException e) {
           e.printStackTrace();
@@ -108,38 +105,7 @@ public class PluginLocationService extends CordovaPlugin {
     }
   }
 
-  private void getSuggestionsFromLocations(String textLocation, CallbackContext callbackContext) {
-        // Configurar a sessão de Autocomplete
-        AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
-
-        // Configurar os limites de busca
-        RectangularBounds bounds = RectangularBounds.newInstance(
-                new com.google.android.gms.maps.model.LatLng(-33.880490, 151.184363),
-                new com.google.android.gms.maps.model.LatLng(-33.858754, 151.229596));
-
-        // Configurar a requisição de Autocomplete
-        FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
-                .setLocationBias(bounds)
-                .setSessionToken(token)
-                .setQuery(textLocation)
-                .build();
-
-        // Inicializar o PlacesClient
-        PlacesClient placesClient = com.google.android.libraries.places.api.Places.createClient(this.cordova.getActivity());
-
-        // Fazer a requisição de Autocomplete
-        placesClient.findAutocompletePredictions(request)
-            .addOnSuccessListener((response) -> {
-                JSONArray suggestions = new JSONArray();
-                for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
-                    suggestions.put(prediction.getFullText(null).toString());
-                }
-                callbackContext.success(suggestions);
-            })
-            .addOnFailureListener((exception) -> {
-                callbackContext.error("Erro ao obter sugestões de locais: " + exception.getMessage());
-            });
-    }
+   
 
 
       @SuppressWarnings("unused")
