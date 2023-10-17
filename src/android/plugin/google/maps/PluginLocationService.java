@@ -83,7 +83,7 @@ public class PluginLocationService extends CordovaPlugin {
     
       Places.initialize(appContext, API_KEY);
  
-    } catch (NameNotFoundException e) {
+    } catch (Exception e) {
 
       System.out.println("Erro ao inicializar o Places: " + e.getMessage());
       
