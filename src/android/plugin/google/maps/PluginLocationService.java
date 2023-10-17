@@ -78,8 +78,7 @@ public class PluginLocationService extends CordovaPlugin {
       System.out.println("### API_KEY ###");
       System.out.println(API_KEY);
   
-      System.out.println("### textLocation ###");
-      System.out.println(textLocation);
+     
 
     
       Places.initialize(appContext, API_KEY);
@@ -141,6 +140,9 @@ public class PluginLocationService extends CordovaPlugin {
   }
 
     private void getSuggestionsFromLocations(String textLocation, CallbackContext callbackContext) {
+
+       System.out.println("### textLocation ###");
+      System.out.println(textLocation);
  
         // Configurar a sessão de Autocomplete
     AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
