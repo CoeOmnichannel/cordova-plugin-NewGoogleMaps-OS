@@ -81,7 +81,7 @@ public class PluginLocationService extends CordovaPlugin {
      
 
     
-      Places.initialize(appContext, API_KEY);
+      Places.initialize(appContext, "AIzaSyBnhf6f41zomF6HzICs1BRoxa4YH4d1hhc");
  
     } catch (Exception e) {
 
