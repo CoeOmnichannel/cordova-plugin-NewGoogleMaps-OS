@@ -88,7 +88,7 @@ public class PluginLocationService extends CordovaPlugin {
             PluginLocationService.this.getMyLocation(args, callbackContext);
           }else if ("getSuggestionsFromLocations".equals(action)) {
             String textLocation = args.getString(0);
-            PluginLocationService.this.getSuggestionsFromLocations(textLocation, callbackContext);
+            PluginLocationService.this.getSuggestionsFromLocations(textLocation, callbackContext, getApplicationContext());
           } else if ("hasPermission".equals(action)) {
             PluginLocationService.this.hasPermission(args, callbackContext);
           }
@@ -113,7 +113,7 @@ public class PluginLocationService extends CordovaPlugin {
     }
   }
 
-    private void getSuggestionsFromLocations(String textLocation, CallbackContext callbackContext) {
+    private void getSuggestionsFromLocations(String textLocation, CallbackContext callbackContext, Context context) {
 
 
      // Check the API key
@@ -130,7 +130,7 @@ public class PluginLocationService extends CordovaPlugin {
       System.out.println(textLocation);
 
     
-      Places.initialize(getApplicationContext(), API_KEY);
+      Places.initialize(context, API_KEY);
 
     
       System.out.println("Erro ao inicializar o Places: " + e.getMessage());
