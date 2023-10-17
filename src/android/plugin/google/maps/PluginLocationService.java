@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -119,22 +120,25 @@ public class PluginLocationService extends CordovaPlugin {
     ApplicationInfo appliInfo = null;
     try {
       appliInfo = activity.getPackageManager().getApplicationInfo(activity.getPackageName(), PackageManager.GET_META_DATA);
-    } catch (NameNotFoundException e) {}
 
-    String API_KEY = appliInfo.metaData.getString("com.google.android.maps.v2.API_KEY");
+       String API_KEY = appliInfo.metaData.getString("com.google.android.maps.v2.API_KEY");
+  
+      System.out.println("### API_KEY ###");
+      System.out.println(API_KEY);
+  
+      System.out.println("### textLocation ###");
+      System.out.println(textLocation);
 
-    System.out.println("### API_KEY ###");
-    System.out.println(API_KEY);
-
-    System.out.println("### textLocation ###");
-    System.out.println(textLocation);
-
-    try {
+    
       Places.initialize(getApplicationContext(), API_KEY);
 
-    } catch (Exception e) {
+    
       System.out.println("Erro ao inicializar o Places: " + e.getMessage());
-    }
+      
+    } catch (NameNotFoundException e) {}
+
+   
+    
     
         // Configurar a sessão de Autocomplete
     AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
