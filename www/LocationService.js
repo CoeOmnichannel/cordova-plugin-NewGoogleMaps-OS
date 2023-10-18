@@ -75,14 +75,14 @@ var LocationService = function(exec) {
     },
 
       // Adicione a função para obter sugestões de locais
-getSuggestionsFromLocations : function(params, success_callback, errorCallback) {
+getSuggestionsFromLocations : function(textLocation, country, success_callback, errorCallback) {
   var self = this;
-  var args = [params, success_callback || null, errorCallback];
+  var args = [textLocation, country, success_callback || null, errorCallback];
   if (typeof args[0] === 'function') {
       args.unshift('');
   }
-  texto = args[0];
-  country = args[1];
+  texto = textLocation;
+  country = country;
   console.log("texto: " + texto);
   console.log("country: " + country);
   success_callback = args[2];
@@ -95,7 +95,7 @@ getSuggestionsFromLocations : function(params, success_callback, errorCallback) 
     function(sugestoes) {
       resolve.call(self, sugestoes);
     },
-    reject.bind(self), 'PluginLocationService', 'getSuggestionsFromLocations', [params], {sync: true});
+    reject.bind(self), 'PluginLocationService', 'getSuggestionsFromLocations', [textLocation, country], {sync: true});
   };
 
   var errorHandler = function(result) {
