@@ -106,6 +106,8 @@ public class PluginLocationService extends CordovaPlugin {
           }else if ("getSuggestionsFromLocations".equals(action)) {
             String textLocation = args.getString(0);
             String country = args.getString(1);
+
+            System.out.println("##### Country: "+country+" ####");
              
             PluginLocationService.this.getSuggestionsFromLocations(textLocation, country, callbackContext);
           } else if ("hasPermission".equals(action)) {
@@ -139,6 +141,8 @@ public class PluginLocationService extends CordovaPlugin {
     RectangularBounds bounds = RectangularBounds.newInstance(
       new com.google.android.gms.maps.model.LatLng(-33.880490, 151.184363),
       new com.google.android.gms.maps.model.LatLng(-33.858754, 151.229596));
+
+       System.out.println("##### Country getSuggestionsFromLocations: "+country+" ####");
 
     // Configurar a requisição de Autocomplete
     FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
