@@ -104,12 +104,19 @@ public class PluginLocationService extends CordovaPlugin {
           if ("getMyLocation".equals(action)) {
             PluginLocationService.this.getMyLocation(args, callbackContext);
           }else if ("getSuggestionsFromLocations".equals(action)) {
+
+            System.out.println("##### Args Lenght: "+args.length+" ####");
+            
             String textLocation = args.getString(0);
             String country = args.getString(1);
 
             System.out.println("##### Country: "+country+" ####");
              
             PluginLocationService.this.getSuggestionsFromLocations(textLocation, country, callbackContext);
+
+            
+
+            
           } else if ("hasPermission".equals(action)) {
             PluginLocationService.this.hasPermission(args, callbackContext);
           }
