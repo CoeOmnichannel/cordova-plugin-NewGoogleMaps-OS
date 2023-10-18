@@ -82,8 +82,9 @@ getSuggestionsFromLocations : function(params, success_callback, errorCallback) 
       args.unshift('');
   }
   texto = args[0];
-  success_callback = args[1];
-  errorCallback = args[2];
+  country = args[1];
+  success_callback = args[2];
+  errorCallback = args[3];
 
   var resolver = function(resolve, reject) {
     exec.call({
