@@ -83,6 +83,8 @@ getSuggestionsFromLocations : function(params, success_callback, errorCallback) 
   }
   texto = args[0];
   country = args[1];
+  console.log("texto: " + texto);
+  console.log("country: " + country);
   success_callback = args[2];
   errorCallback = args[3];
 
