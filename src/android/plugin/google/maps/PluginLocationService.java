@@ -105,8 +105,9 @@ public class PluginLocationService extends CordovaPlugin {
             PluginLocationService.this.getMyLocation(args, callbackContext);
           }else if ("getSuggestionsFromLocations".equals(action)) {
             String textLocation = args.getString(0);
+            String country = args.getString(1);
              
-            PluginLocationService.this.getSuggestionsFromLocations(textLocation, callbackContext);
+            PluginLocationService.this.getSuggestionsFromLocations(textLocation, country, callbackContext);
           } else if ("hasPermission".equals(action)) {
             PluginLocationService.this.hasPermission(args, callbackContext);
           }
@@ -129,7 +130,7 @@ public class PluginLocationService extends CordovaPlugin {
     }
   }
 
-    private void getSuggestionsFromLocations(String textLocation, CallbackContext callbackContext) {
+    private void getSuggestionsFromLocations(String textLocation, String country, CallbackContext callbackContext) {
     
     // Configurar a sessão de Autocomplete
     AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
@@ -143,6 +144,7 @@ public class PluginLocationService extends CordovaPlugin {
     FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
     .setLocationBias(bounds)
     .setSessionToken(token)
+    .setCountries(country)
     .setQuery(textLocation)
     .build();
 
