@@ -105,7 +105,7 @@ public class PluginLocationService extends CordovaPlugin {
             PluginLocationService.this.getMyLocation(args, callbackContext);
           }else if ("getSuggestionsFromLocations".equals(action)) {
 
-            System.out.println("##### Args Lenght: "+args.length+" ####");
+            System.out.println("##### Args Lenght: "+args.length()+" ####");
             
             String textLocation = args.getString(0);
             String country = args.getString(1);
