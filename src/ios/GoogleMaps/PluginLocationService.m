@@ -7,9 +7,7 @@
 //
 
 #import "PluginLocationService.h"
-#import <GooglePlaces/GooglePlaces.h>
-
-
+  
 @implementation PluginLocationService
 
 - (void)pluginInitialize
