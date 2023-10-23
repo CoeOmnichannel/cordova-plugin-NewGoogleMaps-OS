@@ -231,36 +231,45 @@
 
 }
 
+
 - (void)getSuggestionsFromLocations:(NSString *)textLocation country:(NSString *)country callbackContext:(CDVInvokedUrlCommand *)command {
-    GMSAutocompleteSessionToken *token = [GMSAutocompleteSessionToken new];
-    
-    GMSCoordinateBounds *bounds = [[GMSCoordinateBounds alloc] initWithCoordinate:CLLocationCoordinate2DMake(-33.880490, 151.184363)
-                                                                       coordinate:CLLocationCoordinate2DMake(-33.858754, 151.229596)];
-    
+
     GMSAutocompleteFilter *filter = [[GMSAutocompleteFilter alloc] init];
-    filter.countries = @[country]; // Correção aqui
-    
-    GMSPlacesClient *placesClient = [GMSPlacesClient sharedClient];
-    
-    [placesClient findAutocompletePredictionsFromQuery:textLocation
-                                                bounds:bounds
-                                                boundsMode:kGMSAutocompleteBoundsModeRestrict // Verifique se este modo está correto
-                                                  filter:filter
-                                                sessionToken:token
-                                                callback:^(NSArray *results, NSError *error) {
-        if (error != nil) {
-            [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]] callbackId:command.callbackId];
-            return;
-        }
+    filter.type = kGMSPlacesAutocompleteTypeFilterNoFilter; // Filtragem personalizada desativada
+    filter.country = country;
 
-        NSMutableArray *suggestions = [NSMutableArray array];
+     GMSAutocompleteViewController *autocompleteViewController = [[GMSAutocompleteViewController alloc] init];
+    autocompleteViewController.delegate = self;
+    autocompleteViewController.autocompleteFilter = filter;
 
-        for (GMSAutocompletePrediction *prediction in results) {
-            [suggestions addObject:prediction.attributedFullText.string];
-        }
+     [self.viewController presentViewController:autocompleteViewController animated:YES completion:nil];
+}
 
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:suggestions] callbackId:command.callbackId];
-    }];
+- (void)viewController:(GMSAutocompleteViewController *)viewController didAutocompleteWithPlace:(GMSPlace *)place {
+     [self.viewController dismissViewControllerAnimated:YES completion:nil];
+ 
+    NSMutableDictionary *result = [NSMutableDictionary dictionary];
+    [result setObject:place.name forKey:@"name"];
+    [result setObject:[NSNumber numberWithDouble:place.coordinate.latitude] forKey:@"latitude"];
+    [result setObject:[NSNumber numberWithDouble:place.coordinate.longitude] forKey:@"longitude"];
+    [result setObject:place.formattedAddress forKey:@"formatted_address"];
+
+    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:result];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:self.latestCallbackId];
+}
+
+- (void)viewController:(GMSAutocompleteViewController *)viewController didFailAutocompleteWithError:(NSError *)error {
+     [self.viewController dismissViewControllerAnimated:YES completion:nil];
+
+     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:self.latestCallbackId];
+}
+
+- (void)viewControllerDidCancel:(GMSAutocompleteViewController *)viewController {
+     [self.viewController dismissViewControllerAnimated:YES completion:nil];
+
+     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"User canceled"];
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:self.latestCallbackId];
 }
 
 
