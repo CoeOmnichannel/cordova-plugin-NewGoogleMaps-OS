@@ -238,14 +238,14 @@
                                                                        coordinate:CLLocationCoordinate2DMake(-33.858754, 151.229596)];
     
     GMSAutocompleteFilter *filter = [[GMSAutocompleteFilter alloc] init];
-    filter.country = country;
+    filter.countries = @[country]; // Correção aqui
     
     GMSPlacesClient *placesClient = [GMSPlacesClient sharedClient];
     
     [placesClient findAutocompletePredictionsFromQuery:textLocation
                                                 bounds:bounds
-                                                boundsMode:kGMSAutocompleteBoundsModeRestrict
-                                              filter:filter
+                                                boundsMode:kGMSAutocompleteBoundsModeRestrict // Verifique se este modo está correto
+                                                  filter:filter
                                                 sessionToken:token
                                                 callback:^(NSArray *results, NSError *error) {
         if (error != nil) {
@@ -262,5 +262,6 @@
         [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:suggestions] callbackId:command.callbackId];
     }];
 }
+
 
 @end
