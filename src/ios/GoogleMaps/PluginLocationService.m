@@ -7,6 +7,8 @@
 //
 
 #import "PluginLocationService.h"
+#import <GooglePlaces/GooglePlaces.h>
+
 
 @implementation PluginLocationService
 
@@ -228,6 +230,38 @@
     }
     [self.locationCommandQueue removeAllObjects];
 
+}
+
+- (void)getSuggestionsFromLocations:(NSString *)textLocation country:(NSString *)country callbackContext:(CDVInvokedUrlCommand *)command {
+    GMSAutocompleteSessionToken *token = [GMSAutocompleteSessionToken new];
+    
+    GMSCoordinateBounds *bounds = [[GMSCoordinateBounds alloc] initWithCoordinate:CLLocationCoordinate2DMake(-33.880490, 151.184363)
+                                                                       coordinate:CLLocationCoordinate2DMake(-33.858754, 151.229596)];
+    
+    GMSAutocompleteFilter *filter = [[GMSAutocompleteFilter alloc] init];
+    filter.country = country;
+    
+    GMSPlacesClient *placesClient = [GMSPlacesClient sharedClient];
+    
+    [placesClient findAutocompletePredictionsFromQuery:textLocation
+                                                bounds:bounds
+                                                boundsMode:kGMSAutocompleteBoundsModeRestrict
+                                              filter:filter
+                                                sessionToken:token
+                                                callback:^(NSArray *results, NSError *error) {
+        if (error != nil) {
+            [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]] callbackId:command.callbackId];
+            return;
+        }
+
+        NSMutableArray *suggestions = [NSMutableArray array];
+
+        for (GMSAutocompletePrediction *prediction in results) {
+            [suggestions addObject:prediction.attributedFullText.string];
+        }
+
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:suggestions] callbackId:command.callbackId];
+    }];
 }
 
 @end
