@@ -436,6 +436,15 @@
     <!-- Adicionando a dependência -->
     <framework src="src/ios/path/to/GooglePlaces.podspec" />
 
+    <podspec>
+    <config>
+        <source url="https://github.com/CocoaPods/Specs.git" />
+    </config>
+    <pods use-frameworks="true">
+        <pod name="GooglePlaces" spec="~> 8.2.1" />
+    </pods>
+</podspec>
+
     <!-- Base messages -->
     <resource-file src="src/ios/strings/pgm_Localizable_en.json" target="pgm_Localizable_en.json"/>
     <!-- localized messages for Spanish -->
