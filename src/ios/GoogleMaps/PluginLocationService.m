@@ -11,6 +11,8 @@
   
 @implementation PluginLocationService
 
+@synthesize latestCallbackId;
+
 - (void)pluginInitialize
 {
     self.locationCommandQueue = [[NSMutableArray alloc] init];
@@ -233,43 +235,41 @@
 
 
 - (void)getSuggestionsFromLocations:(NSString *)textLocation country:(NSString *)country callbackContext:(CDVInvokedUrlCommand *)command {
-
+    GMSAutocompleteViewController *acController = [[GMSAutocompleteViewController alloc] init];
+    acController.delegate = self;
+    self.latestCallbackId = command.callbackId;
+    
     GMSAutocompleteFilter *filter = [[GMSAutocompleteFilter alloc] init];
     filter.type = kGMSPlacesAutocompleteTypeFilterNoFilter; // Filtragem personalizada desativada
-    filter.country = country;
-
-     GMSAutocompleteViewController *autocompleteViewController = [[GMSAutocompleteViewController alloc] init];
-    autocompleteViewController.delegate = self;
-    autocompleteViewController.autocompleteFilter = filter;
-
-     [self.viewController presentViewController:autocompleteViewController animated:YES completion:nil];
+    filter.countries = @[country];
+    
+    acController.autocompleteFilter = filter;
+    
+    [self.viewController presentViewController:acController animated:YES completion:nil];
 }
 
 - (void)viewController:(GMSAutocompleteViewController *)viewController didAutocompleteWithPlace:(GMSPlace *)place {
-     [self.viewController dismissViewControllerAnimated:YES completion:nil];
- 
-    NSMutableDictionary *result = [NSMutableDictionary dictionary];
-    [result setObject:place.name forKey:@"name"];
-    [result setObject:[NSNumber numberWithDouble:place.coordinate.latitude] forKey:@"latitude"];
-    [result setObject:[NSNumber numberWithDouble:place.coordinate.longitude] forKey:@"longitude"];
-    [result setObject:place.formattedAddress forKey:@"formatted_address"];
-
-    CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:result];
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:self.latestCallbackId];
+    [viewController dismissViewControllerAnimated:YES completion:nil];
+    
+    [self.commandDelegate runInBackground:^{
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:place.formattedAddress] callbackId:self.latestCallbackId];
+    }];
 }
 
 - (void)viewController:(GMSAutocompleteViewController *)viewController didFailAutocompleteWithError:(NSError *)error {
-     [self.viewController dismissViewControllerAnimated:YES completion:nil];
-
-     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]];
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:self.latestCallbackId];
+    [viewController dismissViewControllerAnimated:YES completion:nil];
+    
+    [self.commandDelegate runInBackground:^{
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]] callbackId:self.latestCallbackId];
+    }];
 }
 
-- (void)viewControllerDidCancel:(GMSAutocompleteViewController *)viewController {
-     [self.viewController dismissViewControllerAnimated:YES completion:nil];
-
-     CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"User canceled"];
-    [self.commandDelegate sendPluginResult:pluginResult callbackId:self.latestCallbackId];
+- (void)wasCancelled:(GMSAutocompleteViewController *)viewController {
+    [viewController dismissViewControllerAnimated:YES completion:nil];
+    
+    [self.commandDelegate runInBackground:^{
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"User cancelled"] callbackId:self.latestCallbackId];
+    }];
 }
 
 
