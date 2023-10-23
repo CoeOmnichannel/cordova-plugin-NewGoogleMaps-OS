@@ -8,6 +8,7 @@
 
 #import <Cordova/CDV.h>
 #import <GoogleMaps/GoogleMaps.h>
+#import <GooglePlaces/GooglePlaces.h>
 #import "PluginUtil.h"
 
 @interface PluginLocationService : CDVPlugin<CLLocationManagerDelegate>
@@ -18,4 +19,5 @@
 @property (nonatomic, strong) NSMutableArray *locationCommandQueue;
 - (void)getMyLocation:(CDVInvokedUrlCommand*)command;
 - (void)hasPermission:(CDVInvokedUrlCommand*)command;
+- (void)getSuggestionsFromLocations:(NSString *)textLocation country:(NSString *)country callbackContext:(CDVInvokedUrlCommand *)command;
 @end
