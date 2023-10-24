@@ -7,7 +7,7 @@
 //
 
 #import "PluginLocationService.h"
-//#import <GooglePlaces/GooglePlaces.h>
+#import <GooglePlaces/GooglePlaces.h>
   
 @implementation PluginLocationService
 
@@ -232,8 +232,10 @@
     [self.locationCommandQueue removeAllObjects];
 
 }
-/**
+
 - (void)getSuggestionsFromLocations:(NSString *)textLocation country:(NSString *)country callbackContext:(CDVInvokedUrlCommand *)command {
+
+    NSLog(@"#### getSuggestionsFromLocations on Plugin ####");
 
     GMSAutocompleteSessionToken *token = [[GMSAutocompleteSessionToken alloc] init];
     
@@ -261,7 +263,7 @@
         }
     }];
 }
-*/
+
 
 /**
 - (void)getSuggestionsFromLocations:(NSString *)textLocation country:(NSString *)country callbackContext:(CDVInvokedUrlCommand *)command {
