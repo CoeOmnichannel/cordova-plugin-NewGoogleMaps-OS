@@ -233,7 +233,39 @@
 
 }
 
+- (void)getSuggestionsFromLocations:(NSString *)textLocation country:(NSString *)country callbackContext:(CDVInvokedUrlCommand *)command {
 
+ NSLog(@"#### getSuggestionsFromLocations ####");
+ 
+    GMSAutocompleteFilter *filter = [[GMSAutocompleteFilter alloc] init];
+    filter.type = kGMSPlacesAutocompleteTypeFilterNoFilter; 
+    filter.countries = @[country];
+    
+    GMSCoordinateBounds *bounds = [[GMSCoordinateBounds alloc] initWithCoordinate:CLLocationCoordinate2DMake(-33.870840, 151.206036) coordinate:CLLocationCoordinate2DMake(-33.870840, 151.206036)];
+    
+    GMSAutocompleteSessionToken *token = [[GMSAutocompleteSessionToken alloc] init];
+    
+    [placesClient fetchQueryPredictions:textLocation bounds:bounds boundsMode:kGMSAutocompleteBoundsModeRestrict filter:filter sessionToken:token callback:^(NSArray<GMSAutocompletePrediction *> * _Nullable results, NSError * _Nullable error) {
+        if (error != nil) {
+            // Ocorreu um erro ao obter as sugestões
+            [self.commandDelegate runInBackground:^{
+                [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]] callbackId:command.callbackId];
+            }];
+        } else {
+            NSMutableArray *suggestions = [NSMutableArray array];
+            for (GMSAutocompletePrediction *prediction in results) {
+                [suggestions addObject:prediction.attributedFullText.string];
+            }
+            
+            [self.commandDelegate runInBackground:^{
+                [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:suggestions] callbackId:command.callbackId];
+            }];
+        }
+    }];
+}
+
+
+/**
 - (void)getSuggestionsFromLocations:(NSString *)textLocation country:(NSString *)country callbackContext:(CDVInvokedUrlCommand *)command {
 
     NSLog(@"#### 1 ####");
@@ -289,6 +321,6 @@ NSLog(@"#### wasCancelled ####");
         [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"User cancelled"] callbackId:self.latestCallbackId];
     }];
 }
-
+*/
 
 @end
