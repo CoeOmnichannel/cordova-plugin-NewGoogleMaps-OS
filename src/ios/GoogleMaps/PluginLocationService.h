@@ -23,6 +23,6 @@
 - (void)hasPermission:(CDVInvokedUrlCommand*)command;
 //- (void)getSuggestionsFromLocations:(NSString *)textLocation country:(NSString *)country callbackContext:(CDVInvokedUrlCommand *)command;
 //- (void)getSuggestionsFromLocations:(NSString *)textLocation country:(NSString *)country:(CDVInvokedUrlCommand *)command;
-- (void)getSuggestionsFromLocations:(NSString *)textLocation country:(NSString *)country callbackContext:(CDVInvokedUrlCommand *)command;
+- (void)getSuggestionsFromLocations:(CDVInvokedUrlCommand *)command;
 
 @end
