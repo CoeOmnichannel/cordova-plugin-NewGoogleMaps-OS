@@ -233,8 +233,8 @@
 
 }
 
-- (void)getSuggestionsFromLocations:(NSString *)textLocation country:(NSString *)country callbackContext:(CDVInvokedUrlCommand *)command {
-
+//- (void)getSuggestionsFromLocations:(NSString *)textLocation country:(NSString *)country callbackContext:(CDVInvokedUrlCommand *)command {
+- (void)getSuggestionsFromLocations:(NSString *)textLocation country:(NSString *)country:(CDVInvokedUrlCommand *)command {
     NSLog(@"#### getSuggestionsFromLocations on Plugin ####");
 
     GMSAutocompleteSessionToken *token = [[GMSAutocompleteSessionToken alloc] init];
