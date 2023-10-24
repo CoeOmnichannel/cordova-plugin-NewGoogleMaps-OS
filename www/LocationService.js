@@ -76,6 +76,9 @@ var LocationService = function(exec) {
 
       // Adicione a função para obter sugestões de locais
 getSuggestionsFromLocations : function(textLocation, country, success_callback, errorCallback) {
+
+  console.log("#### getSuggestionsFromLocations on Javascript ok ####");
+  
   var self = this;
   var args = [textLocation, country, success_callback || null, errorCallback];
   if (typeof args[0] === 'function') {
