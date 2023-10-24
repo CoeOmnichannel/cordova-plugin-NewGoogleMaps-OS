@@ -238,17 +238,18 @@
 }
 
 - (void)getSuggestionsFromLocations:(CDVInvokedUrlCommand *)command {
-
- NSLog(@"#### getSuggestionsFromLocations on Plugin ####");
-
-    __weak typeof(self) weakSelf = self;
     [self.commandDelegate runInBackground:^{
-        id textLocation = [weakSelf getCommandArg:command.arguments[0]];
-        id country = [weakSelf getCommandArg:command.arguments[1]];
+        id textLocation = [self getCommandArg:command.arguments[0]];
+        id country = [self getCommandArg:command.arguments[1]];
 
         if ([textLocation isKindOfClass:[NSString class]] && [country isKindOfClass:[NSString class]]) {
+            // Agora você tem os parâmetros textLocation e country disponíveis para usar
+            // Faça o que precisar com eles
+            NSLog(@"textLocation: %@", textLocation);
+            NSLog(@"country: %@", country);
+
             GMSAutocompleteSessionToken *token = [[GMSAutocompleteSessionToken alloc] init];
-            
+    
             GMSAutocompleteFilter *filter = [[GMSAutocompleteFilter alloc] init];
             filter.type = kGMSPlacesAutocompleteTypeFilterNoFilter; 
             filter.countries = @[country];
@@ -257,9 +258,9 @@
             
             [placesClient findAutocompletePredictionsFromQuery:textLocation filter:filter sessionToken:token callback:^(NSArray * _Nullable results, NSError * _Nullable error) {
                 if (error != nil) {
-                    
-                    [weakSelf.commandDelegate runInBackground:^{
-                        [weakSelf.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]] callbackId:command.callbackId];
+                    // Ocorreu um erro ao obter as sugestões
+                    [self.commandDelegate runInBackground:^{
+                        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]] callbackId:command.callbackId];
                     }];
                 } else {
                     NSMutableArray *suggestions = [NSMutableArray array];
@@ -267,14 +268,15 @@
                         [suggestions addObject:prediction.attributedFullText.string];
                     }
                     
-                    [weakSelf.commandDelegate runInBackground:^{
-                        [weakSelf.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:suggestions] callbackId:command.callbackId];
+                    [self.commandDelegate runInBackground:^{
+                        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:suggestions] callbackId:command.callbackId];
                     }];
                 }
             }];
+             
         } else {
             CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Parâmetros inválidos"];
-            [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+            [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
         }
     }];
 }
