@@ -238,34 +238,21 @@
 }
 
 - (void)getSuggestionsFromLocations:(CDVInvokedUrlCommand *)command {
-
-NSLog(@"##### getSuggestionsFromLocations on Plugin iOS #####");
-
+ 
     [self.commandDelegate runInBackground:^{
         id textLocation = [self getCommandArg:command.arguments[0]];
         id country = [self getCommandArg:command.arguments[1]];
 
         if ([textLocation isKindOfClass:[NSString class]] && [country isKindOfClass:[NSString class]]) {
-            
-            NSLog(@"textLocation: %@", textLocation);
-            NSLog(@"country: %@", country);
-
-            
+             
             GMSAutocompleteSessionToken *token = [[GMSAutocompleteSessionToken alloc] init];
-
-            NSLog(@"##### 1 #####");
-
-    
+ 
             GMSAutocompleteFilter *filter = [[GMSAutocompleteFilter alloc] init];
             filter.type = kGMSPlacesAutocompleteTypeFilterNoFilter; 
             filter.countries = @[country];
-
-            NSLog(@"##### 2 #####");
-            
+  
             GMSPlacesClient *placesClient = [GMSPlacesClient sharedClient];
-
-            NSLog(@"##### 3 #####");
-           
+  
             [placesClient findAutocompletePredictionsFromQuery:textLocation filter:filter sessionToken:token callback:^(NSArray * _Nullable results, NSError * _Nullable error) {
                 if (error != nil) {
                      
@@ -295,96 +282,6 @@ NSLog(@"##### getSuggestionsFromLocations on Plugin iOS #####");
     }];
 }
 
-
- /**
-  - (void)getSuggestionsFromLocations:(NSString *)textLocation country:(NSString *)country callbackContext:(CDVInvokedUrlCommand *)command {
-
-    NSLog(@"#### getSuggestionsFromLocations on Plugin ####");
-
-    GMSAutocompleteSessionToken *token = [[GMSAutocompleteSessionToken alloc] init];
-    
-    GMSAutocompleteFilter *filter = [[GMSAutocompleteFilter alloc] init];
-    filter.type = kGMSPlacesAutocompleteTypeFilterNoFilter; 
-    filter.countries = @[country];
-    
-    GMSPlacesClient *placesClient = [GMSPlacesClient sharedClient];
-    
-    [placesClient findAutocompletePredictionsFromQuery:textLocation filter:filter sessionToken:token callback:^(NSArray * _Nullable results, NSError * _Nullable error) {
-        if (error != nil) {
-            // Ocorreu um erro ao obter as sugestões
-            [self.commandDelegate runInBackground:^{
-                [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]] callbackId:command.callbackId];
-            }];
-        } else {
-            NSMutableArray *suggestions = [NSMutableArray array];
-            for (GMSAutocompletePrediction *prediction in results) {
-                [suggestions addObject:prediction.attributedFullText.string];
-            }
-            
-            [self.commandDelegate runInBackground:^{
-                [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:suggestions] callbackId:command.callbackId];
-            }];
-        }
-    }];
-}
-*/
-
-/**
-- (void)getSuggestionsFromLocations:(NSString *)textLocation country:(NSString *)country callbackContext:(CDVInvokedUrlCommand *)command {
-
-    NSLog(@"#### 1 ####");
-    
-    GMSAutocompleteViewController *acController = [[GMSAutocompleteViewController alloc] init];
-    acController.delegate = self;
-    self.latestCallbackId = command.callbackId;
-
-     NSLog(@"#### 2 ####");
-    
-    GMSAutocompleteFilter *filter = [[GMSAutocompleteFilter alloc] init];
-    filter.type = kGMSPlacesAutocompleteTypeFilterNoFilter; 
-    filter.countries = @[country];
-
-     NSLog(@"#### 3 ####");
-    
-    acController.autocompleteFilter = filter;
-
-     NSLog(@"#### 4 ####");
-    
-    [self.viewController presentViewController:acController animated:YES completion:nil];
-}
-
-- (void)viewController:(GMSAutocompleteViewController *)viewController didAutocompleteWithPlace:(GMSPlace *)place {
-
-NSLog(@"#### didAutocompleteWithPlace ####");
-
-    [viewController dismissViewControllerAnimated:YES completion:nil];
-    
-    [self.commandDelegate runInBackground:^{
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:place.formattedAddress] callbackId:self.latestCallbackId];
-    }];
-}
-
-- (void)viewController:(GMSAutocompleteViewController *)viewController didFailAutocompleteWithError:(NSError *)error {
-
-NSLog(@"#### didFailAutocompleteWithError ####");
-
-    [viewController dismissViewControllerAnimated:YES completion:nil];
-    
-    [self.commandDelegate runInBackground:^{
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:[error localizedDescription]] callbackId:self.latestCallbackId];
-    }];
-}
-
-- (void)wasCancelled:(GMSAutocompleteViewController *)viewController {
-
-NSLog(@"#### wasCancelled ####");
-
-    [viewController dismissViewControllerAnimated:YES completion:nil];
-    
-    [self.commandDelegate runInBackground:^{
-        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"User cancelled"] callbackId:self.latestCallbackId];
-    }];
-}
-*/
+ 
 
 @end
