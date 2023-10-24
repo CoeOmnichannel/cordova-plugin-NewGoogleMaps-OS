@@ -1064,6 +1064,7 @@
   [self execJS:jsString];
 }
 
+/*
 - (void)getSuggestionsFromLocations:(NSString *)textLocation country:(NSString *)country callbackContext:(CDVInvokedUrlCommand *)command {
 
     GMSAutocompleteSessionToken *token = [[GMSAutocompleteSessionToken alloc] init];
@@ -1092,6 +1093,8 @@
         }
     }];
 }
+
+*/
 
 
 @end
