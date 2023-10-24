@@ -235,20 +235,32 @@
 
 
 - (void)getSuggestionsFromLocations:(NSString *)textLocation country:(NSString *)country callbackContext:(CDVInvokedUrlCommand *)command {
+
+    NSLog(@"#### 1 ####");
+    
     GMSAutocompleteViewController *acController = [[GMSAutocompleteViewController alloc] init];
     acController.delegate = self;
     self.latestCallbackId = command.callbackId;
+
+     NSLog(@"#### 2 ####");
     
     GMSAutocompleteFilter *filter = [[GMSAutocompleteFilter alloc] init];
-    filter.type = kGMSPlacesAutocompleteTypeFilterNoFilter; // Filtragem personalizada desativada
+    filter.type = kGMSPlacesAutocompleteTypeFilterNoFilter; 
     filter.countries = @[country];
+
+     NSLog(@"#### 3 ####");
     
     acController.autocompleteFilter = filter;
+
+     NSLog(@"#### 4 ####");
     
     [self.viewController presentViewController:acController animated:YES completion:nil];
 }
 
 - (void)viewController:(GMSAutocompleteViewController *)viewController didAutocompleteWithPlace:(GMSPlace *)place {
+
+NSLog(@"#### didAutocompleteWithPlace ####");
+
     [viewController dismissViewControllerAnimated:YES completion:nil];
     
     [self.commandDelegate runInBackground:^{
@@ -257,6 +269,9 @@
 }
 
 - (void)viewController:(GMSAutocompleteViewController *)viewController didFailAutocompleteWithError:(NSError *)error {
+
+NSLog(@"#### didFailAutocompleteWithError ####");
+
     [viewController dismissViewControllerAnimated:YES completion:nil];
     
     [self.commandDelegate runInBackground:^{
@@ -265,6 +280,9 @@
 }
 
 - (void)wasCancelled:(GMSAutocompleteViewController *)viewController {
+
+NSLog(@"#### wasCancelled ####");
+
     [viewController dismissViewControllerAnimated:YES completion:nil];
     
     [self.commandDelegate runInBackground:^{
