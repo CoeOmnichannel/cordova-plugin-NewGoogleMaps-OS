@@ -238,16 +238,19 @@
 }
 
 - (void)getSuggestionsFromLocations:(CDVInvokedUrlCommand *)command {
+
+NSLog(@"#### getSuggestionsFromLocations on Plugin iOS ####");
+
     [self.commandDelegate runInBackground:^{
         id textLocation = [self getCommandArg:command.arguments[0]];
         id country = [self getCommandArg:command.arguments[1]];
 
         if ([textLocation isKindOfClass:[NSString class]] && [country isKindOfClass:[NSString class]]) {
-            // Agora você tem os parâmetros textLocation e country disponíveis para usar
-            // Faça o que precisar com eles
+            
             NSLog(@"textLocation: %@", textLocation);
             NSLog(@"country: %@", country);
 
+            /*
             GMSAutocompleteSessionToken *token = [[GMSAutocompleteSessionToken alloc] init];
     
             GMSAutocompleteFilter *filter = [[GMSAutocompleteFilter alloc] init];
@@ -255,7 +258,7 @@
             filter.countries = @[country];
             
             GMSPlacesClient *placesClient = [GMSPlacesClient sharedClient];
-            
+           
             [placesClient findAutocompletePredictionsFromQuery:textLocation filter:filter sessionToken:token callback:^(NSArray * _Nullable results, NSError * _Nullable error) {
                 if (error != nil) {
                     // Ocorreu um erro ao obter as sugestões
@@ -272,7 +275,7 @@
                         [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:suggestions] callbackId:command.callbackId];
                     }];
                 }
-            }];
+            }];*/
              
         } else {
             CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Parâmetros inválidos"];
