@@ -235,17 +235,15 @@
 
 - (void)getSuggestionsFromLocations:(NSString *)textLocation country:(NSString *)country callbackContext:(CDVInvokedUrlCommand *)command {
 
- NSLog(@"#### getSuggestionsFromLocations ####");
- 
+    GMSAutocompleteSessionToken *token = [[GMSAutocompleteSessionToken alloc] init];
+    
     GMSAutocompleteFilter *filter = [[GMSAutocompleteFilter alloc] init];
     filter.type = kGMSPlacesAutocompleteTypeFilterNoFilter; 
     filter.countries = @[country];
     
-    GMSCoordinateBounds *bounds = [[GMSCoordinateBounds alloc] initWithCoordinate:CLLocationCoordinate2DMake(-33.870840, 151.206036) coordinate:CLLocationCoordinate2DMake(-33.870840, 151.206036)];
+    GMSPlacesClient *placesClient = [GMSPlacesClient sharedClient];
     
-    GMSAutocompleteSessionToken *token = [[GMSAutocompleteSessionToken alloc] init];
-    
-    [placesClient fetchQueryPredictions:textLocation bounds:bounds boundsMode:kGMSAutocompleteBoundsModeRestrict filter:filter sessionToken:token callback:^(NSArray<GMSAutocompletePrediction *> * _Nullable results, NSError * _Nullable error) {
+    [placesClient findAutocompletePredictionsFromQuery:textLocation filter:filter sessionToken:token callback:^(NSArray * _Nullable results, NSError * _Nullable error) {
         if (error != nil) {
             // Ocorreu um erro ao obter as sugestões
             [self.commandDelegate runInBackground:^{
