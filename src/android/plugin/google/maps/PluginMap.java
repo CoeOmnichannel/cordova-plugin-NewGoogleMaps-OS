@@ -1836,7 +1836,7 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
    * @param callbackContext
    * @throws JSONException
    */
-  public void setMyLocationEnabled(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
+   public void setMyLocationEnabled(final JSONArray args, final CallbackContext callbackContext) throws JSONException {
 
     final JSONObject params = args.getJSONObject(0);
 
@@ -1848,7 +1848,7 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
       //_saveCallbackContext = callbackContext;
       synchronized (semaphore) {
         cordova.requestPermissions(this, callbackContext.hashCode(), new String[]{
-                Manifest.permission.ACCESS_FINE_LOCATION
+            Manifest.permission.ACCESS_FINE_LOCATION
         });
         try {
           semaphore.wait();
@@ -1873,17 +1873,21 @@ public class PluginMap extends MyPlugin implements OnMarkerClickListener,
       public void run() {
         try {
 
-          boolean isMyLocationButtonEnabled = false;
-          if (params.has("myLocationButton")) {
-            isMyLocationButtonEnabled = params.getBoolean("myLocationButton");
-            Log.d("CAMERA_MOVE", "ativando o button padrão");
-            map.getUiSettings().setMyLocationButtonEnabled(isMyLocationButtonEnabled);
-            map.setMyLocationEnabled(isMyLocationButtonEnabled);
-            if(locationButton != null)
-              locationButton.setVisibility(View.GONE);
+          Boolean isMyLocationEnabled = false;
+          if (params.has("myLocation")) {
+            //Log.d(TAG, "--->myLocation = " + params.getBoolean("myLocation"));
+            isMyLocationEnabled = params.getBoolean("myLocation");
+            map.setMyLocationEnabled(isMyLocationEnabled);
           }
 
-          if (isMyLocationButtonEnabled) {
+          Boolean isMyLocationButtonEnabled = false;
+          if (params.has("myLocationButton")) {
+            //Log.d(TAG, "--->myLocationButton = " + params.getBoolean("myLocationButton"));
+            isMyLocationButtonEnabled = params.getBoolean("myLocationButton");
+            map.getUiSettings().setMyLocationButtonEnabled(isMyLocationButtonEnabled);
+          }
+          //Log.d(TAG, "--->isMyLocationButtonEnabled = " + isMyLocationButtonEnabled + ", isMyLocationEnabled = " + isMyLocationEnabled);
+          if (!isMyLocationEnabled && isMyLocationButtonEnabled) {
             dummyMyLocationButton.setVisibility(View.VISIBLE);
           } else {
             dummyMyLocationButton.setVisibility(View.GONE);
