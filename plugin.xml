@@ -130,10 +130,10 @@
   <keywords>google,maps,geo</keywords>
 
   <engines>
-    <engine name="cordova" version=">=7.0.0" />
-    <engine name="cordova-ios" version=">=4.5.0" />
-    <engine name="apple-xcode" version=">=9.0.0" />
-    <engine name="apple-ios" version=">=10.0.0" />
+    <engine name="cordova" version=">=10.0.0" />
+    <engine name="cordova-ios" version=">=7.0.0" />
+    <engine name="apple-xcode" version=">=11.0.0" />
+    <engine name="apple-ios" version=">=11.0.0" />
   </engines>
 
   <!-- android -->
@@ -434,17 +434,19 @@
     <header-file src="src/ios/GoogleMaps/IPluginProtocol.h"/>
 
     <!-- Adicionando a dependência -->
-    <framework src="GooglePlaces" type="podspec" spec="~> 8.2"/>
+    <preference name="deployment-target" value="14.0" />
+    <preference name="SwiftVersion" value="5" />
+    <dependency id="cordova-plugin-add-swift-support@2.0.2"/>
 
-    <!--
     <podspec>
-    <config>
-        <source url="https://github.com/CocoaPods/Specs.git" />
-    </config>
-    <pods use-frameworks="true">
-        <pod name="GooglePlaces" spec="~> 8.2.1" />
-    </pods>
-</podspec>-->
+      <config>
+        <source url="https://cdn.cocoapods.org/"/>
+      </config>
+      <pods use-frameworks="true">
+          <!--pod name="GoogleMaps" spec="~> 8.2.0" /-->
+          <pod name="GooglePlaces" spec="~> 8.2.1" />
+      </pods>
+    </podspec>
 
     <!-- Base messages -->
     <resource-file src="src/ios/strings/pgm_Localizable_en.json" target="pgm_Localizable_en.json"/>
