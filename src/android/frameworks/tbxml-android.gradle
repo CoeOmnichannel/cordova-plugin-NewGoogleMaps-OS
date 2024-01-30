@@ -1,7 +1,6 @@
 repositories {
     google() // Adiciona o repositório do Google
     mavenCentral()
-    jcenter()
     def libsDirPath = System.getProperty("user.dir")
     flatDir{
         dirs 'src/main/libs', 'libs', "${libsDirPath}/libs"

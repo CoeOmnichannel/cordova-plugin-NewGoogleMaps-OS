@@ -1,6 +1,6 @@
 android {
     // #1. Find (project)/config.xml file
-    def configXmlFile = searchFileInParents("app/src/main/res/xml/config.xml")
+    def configXmlFile = file("src/main/res/xml/config.xml")
 
     if (configXmlFile == null) {
         throw new GradleException("Can not find config.xml file.")
